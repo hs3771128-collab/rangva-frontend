@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>THREAD&amp;CO — Fashion (Design Preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F1EC;
+    --ink:#121212;
+    --line:#DFD8CE;
+    --terra:#B4553A;
+    --mustard:#D2A03C;
+    --muted:#7C756D;
+    --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+  .display{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.02em;font-weight:400}
+  a{text-decoration:none;color:inherit}
+
+  .announce{background:var(--ink);color:#F4F1EC;text-align:center;font-size:11px;letter-spacing:.22em;padding:8px;text-transform:uppercase}
+
+  header{position:sticky;top:0;z-index:20;background:rgba(244,241,236,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:30px;padding:15px 26px}
+  .logo{font-family:'Bebas Neue',Impact,sans-serif;font-size:27px;letter-spacing:.12em}
+  .logo em{color:var(--terra);font-style:normal}
+  .links{display:flex;gap:24px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+  .links a:hover{color:var(--terra)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-width:200px}
+  .search input{border:0;outline:0;background:transparent;font-family:inherit;font-size:12.5px;width:100%}
+  .icon-btn{background:#fff;border:1px solid var(--line);border-radius:50%;width:37px;height:37px;display:grid;place-items:center;font-size:15px;cursor:pointer}
+
+  /* HERO */
+  .hero{max-width:1240px;margin:22px auto;padding:0 26px;display:grid;grid-template-columns:1.55fr 1fr;gap:16px}
+  .hero-main{position:relative;border-radius:6px;overflow:hidden;background:#141414;color:#F4F1EC;min-height:430px;display:flex;flex-direction:column;justify-content:flex-end;padding:44px}
+  .hero-main:before{content:"";position:absolute;inset:0;background:
+     radial-gradient(800px 380px at 78% 18%, rgba(210,160,60,.38), transparent 62%),
+     radial-gradient(600px 420px at 20% 90%, rgba(180,85,58,.42), transparent 65%),
+     linear-gradient(120deg,#101010 0%,#1b1b1b 60%,#232323 100%)}
+  .hero-main > *{position:relative}
+  .kicker{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--mustard);margin-bottom:14px}
+  .hero-main h1{font-size:clamp(48px,7vw,92px);line-height:.9}
+  .hero-main p{margin:18px 0 26px;max-width:420px;font-size:14px;font-weight:300;line-height:1.7;color:#CFC8BE}
+  .btn{display:inline-block;padding:14px 34px;background:var(--paper);color:var(--ink);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;width:fit-content}
+  .btn:hover{background:var(--mustard);color:#111}
+  .btn.outline{background:transparent;color:#F4F1EC;border:1px solid rgba(244,241,236,.5)}
+
+  .hero-side{display:grid;grid-template-rows:1fr 1fr;gap:16px}
+  .side{border-radius:6px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
+  .side small{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#5d5750}
+  .side h3{font-family:'Bebas Neue',Impact,sans-serif;font-size:38px;line-height:.95;margin-top:6px}
+  .side .ghost{position:absolute;right:-14px;bottom:-18px;font-size:110px;opacity:.22}
+  .s1{background:#E8DFD2}
+  .s2{background:#EFD9CE}
+
+  /* CATEGORY STRIP */
+  .cats{max-width:1240px;margin:30px auto 6px;padding:0 26px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .cat{border:1px solid var(--line);background:#fff;padding:18px 12px;text-align:center;border-radius:4px;cursor:pointer;transition:.2s}
+  .cat .d{font-family:'Bebas Neue',Impact,sans-serif;font-size:19px;letter-spacing:.06em}
+  .cat .s{font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.08em}
+  .cat:hover,.cat.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .cat:hover .s,.cat.active .s{color:#B9B1A7}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 26px 60px}
+
+  /* FILTER BAR */
+  .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:4px;padding:13px 16px;margin:26px 0 26px}
+  .filters .lbl{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+  .size{width:34px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:3px;font-size:12px;cursor:pointer;background:#fff}
+  .size.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .dot{width:20px;height:20px;border-radius:50%;border:1px solid #cfc7bc;cursor:pointer;display:inline-block}
+  .dot.on{outline:2px solid var(--ink);outline-offset:2px}
+  .sep{width:1px;height:24px;background:var(--line);margin:0 8px}
+  .price{margin-left:auto;font-size:12px;color:var(--muted)}
+
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+  .section-head h2{font-family:'Bebas Neue',Impact,sans-serif;font-size:36px;letter-spacing:.04em;line-height:.9}
+  .section-head a{font-size:11px;letter-spacing:.18em;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:2px}
+
+  /* PRODUCT GRID */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:.2s}
+  .card:hover{box-shadow:0 20px 40px -26px rgba(18,18,18,.6)}
+  .thumb{height:250px;position:relative;display:grid;place-items:center;font-size:64px}
+  .p1{background:linear-gradient(150deg,#E7E2D8,#D8D0C2)}
+  .p2{background:linear-gradient(150deg,#E3E7E6,#CDD5D4)}
+  .p3{background:linear-gradient(150deg,#EFE3D6,#E2CDB7)}
+  .p4{background:linear-gradient(150deg,#E4E0E8,#D2CBDC)}
+  .wish{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:13px;border:1px solid var(--line);cursor:pointer}
+  .badge{position:absolute;top:10px;left:10px;background:var(--terra);color:#fff;font-size:9.5px;letter-spacing:.16em;padding:5px 9px;text-transform:uppercase}
+  .badge.new{background:var(--ink)}
+  .quick{position:absolute;left:0;right:0;bottom:0;background:rgba(18,18,18,.88);color:#fff;text-align:center;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;padding:10px;opacity:0;transition:.2s}
+  .card:hover .quick{opacity:1}
+  .body{padding:14px 14px 16px}
+  .cat-lbl{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .name{font-size:14.5px;font-weight:600;line-height:1.35;margin-bottom:6px}
+  .stars{font-size:11.5px;letter-spacing:1px;color:var(--mustard);margin-bottom:9px}
+  .stars span{color:var(--muted);letter-spacing:0;margin-left:5px}
+  .sizes-row{display:flex;gap:5px;margin-bottom:10px}
+  .sz{font-size:10.5px;border:1px solid var(--line);padding:3px 7px;color:#5d5750}
+  .sz.out{color:#c3bdb4;text-decoration:line-through}
+  .row{display:flex;align-items:center;justify-content:space-between}
+  .pr{display:flex;align-items:baseline;gap:7px}
+  .pr b{font-size:15px}
+  .pr s{font-size:11.5px;color:#b0a89f}
+  .add{padding:9px 14px;background:var(--ink);color:#fff;border:0;font-family:inherit;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+  .add:hover{background:var(--terra)}
+
+  /* BANNER STRIP */
+  .lookbook{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;margin:48px 0 0}
+  .lb{border-radius:4px;min-height:190px;padding:26px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+  .lb h4{font-family:'Bebas Neue',Impact,sans-serif;font-size:27px;line-height:.95}
+  .lb p{font-size:11.5px;color:#514b44;margin-top:4px}
+  .lb .ghost{position:absolute;right:8px;top:10px;font-size:74px;opacity:.2}
+  .l1{background:#E9DFD1}.l2{background:#E5DCD2}.l3{background:#EFE7DA}
+
+  footer{margin-top:56px;background:var(--ink);color:#D9D2C8;padding:46px 26px 28px}
+  .foot{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px;font-size:12.5px}
+  .foot h5{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:14px}
+  .foot ul{list-style:none;display:grid;gap:9px;color:#A79F95}
+  .foot .brandline{font-family:'Bebas Neue',Impact,sans-serif;font-size:28px;letter-spacing:.1em;color:#fff;margin-bottom:10px}
+  .foot p{font-size:12px;line-height:1.7;color:#A79F95;max-width:260px}
+  .copy{max-width:1240px;margin:28px auto 0;border-top:1px solid rgba(255,255,255,.12);padding-top:16px;font-size:11px;color:#8B8378;display:flex;justify-content:space-between;letter-spacing:.06em}
+
+  @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.cats{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.lookbook{grid-template-columns:1fr}.foot{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="announce">Free shipping over Rs. 4,000 &nbsp;·&nbsp; 14-day easy returns</div>
+
+<header>
+  <div class="nav">
+    <div class="logo">THREAD<em>&amp;</em>CO</div>
+    <nav class="links">
+      <a href="#">New In</a><a href="#">Men</a><a href="#">Women</a><a href="#">Footwear</a><a href="#">Accessories</a><a href="#">Sale</a>
+    </nav>
+    <div class="nav-right">
+      <div class="search">🔍 <input placeholder="Search tees, jeans, sneakers…" /></div>
+      <button class="icon-btn" title="Wishlist">♡</button>
+      <button class="icon-btn" title="Cart">🛍</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-main">
+    <div class="kicker">Autumn / Winter 2026</div>
+    <h1 class="display">NEW SEASON<br/>DROP 01</h1>
+    <p>Structured basics. Relaxed fits. Made for layering — built to last beyond the season.</p>
+    <a class="btn" href="#">Shop the drop</a>
+  </div>
+  <div class="hero-side">
+    <div class="side s1">
+      <div><small>Women's edit</small><h3 class="display">SOFT<br/>TAILORING</h3></div>
+      <span class="ghost">🧥</span>
+    </div>
+    <div class="side s2">
+      <div><small>Flat 40% off</small><h3 class="display">SNEAKER<br/>VAULT</h3></div>
+      <span class="ghost">👟</span>
+    </div>
+  </div>
+</section>
+
+<div class="cats">
+  <div class="cat active"><div class="d">MEN</div><div class="s">142 items</div></div>
+  <div class="cat"><div class="d">WOMEN</div><div class="s">216 items</div></div>
+  <div class="cat"><div class="d">KIDS</div><div class="s">88 items</div></div>
+  <div class="cat"><div class="d">FOOTWEAR</div><div class="s">64 items</div></div>
+  <div class="cat"><div class="d">ACCESSORIES</div><div class="s">97 items</div></div>
+  <div class="cat"><div class="d">SALE</div><div class="s">Up to 60%</div></div>
+</div>
+
+<div class="wrap">
+  <div class="filters">
+    <span class="lbl">Size</span>
+    <span class="size">XS</span><span class="size on">S</span><span class="size">M</span><span class="size">L</span><span class="size">XL</span><span class="size">XXL</span>
+    <span class="sep"></span>
+    <span class="lbl">Colour</span>
+    <span class="dot" style="background:#121212"></span>
+    <span class="dot on" style="background:#B4553A"></span>
+    <span class="dot" style="background:#EFE7DA"></span>
+    <span class="dot" style="background:#6E7B6B"></span>
+    <span class="dot" style="background:#2E4A6B"></span>
+    <span class="sep"></span>
+    <span class="lbl">Fit</span>
+    <span class="size" style="width:auto;padding:0 10px">Slim</span>
+    <span class="size on" style="width:auto;padding:0 10px">Relaxed</span>
+    <span class="size" style="width:auto;padding:0 10px">Oversized</span>
+    <span class="price">Rs. 1,000 — 12,000 · Sort: Newest ▾</span>
+  </div>
+
+  <div class="section-head">
+    <h2>Trending now</h2>
+    <a href="#">View all</a>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="thumb p1">👕<span class="badge">-30%</span><span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Men · T-Shirts</div>
+        <div class="name">Oversized Heavyweight Tee — Ecru</div>
+        <div class="stars">★★★★★ <span>(128)</span></div>
+        <div class="sizes-row"><span class="sz">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz out">XL</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 2,190</b><s>Rs. 3,120</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p2">👖<span class="badge new">New</span><span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Men · Denim</div>
+        <div class="name">Straight-Leg Rigid Denim — Indigo</div>
+        <div class="stars">★★★★☆ <span>(64)</span></div>
+        <div class="sizes-row"><span class="sz">30</span><span class="sz">32</span><span class="sz">34</span><span class="sz">36</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 4,750</b><s>Rs. 5,900</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p3">🧥<span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Women · Outerwear</div>
+        <div class="name">Wool-Blend Overcoat — Camel</div>
+        <div class="stars">★★★★★ <span>(41)</span></div>
+        <div class="sizes-row"><span class="sz">S</span><span class="sz">M</span><span class="sz">L</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 11,900</b><s>Rs. 14,500</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p4">👟<span class="badge">-40%</span><span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Footwear · Sneakers</div>
+        <div class="name">Retro Court Trainer — Off White</div>
+        <div class="stars">★★★★☆ <span>(203)</span></div>
+        <div class="sizes-row"><span class="sz">41</span><span class="sz">42</span><span class="sz">43</span><span class="sz out">44</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 6,240</b><s>Rs. 10,400</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p3">🧣<span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Accessories</div>
+        <div class="name">Chunky Ribbed Scarf — Rust</div>
+        <div class="stars">★★★★★ <span>(57)</span></div>
+        <div class="sizes-row"><span class="sz">One size</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 1,890</b><s>Rs. 2,400</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p1">🧢<span class="badge new">New</span><span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Accessories · Caps</div>
+        <div class="name">Washed Cotton Cap — Stone</div>
+        <div class="stars">★★★★☆ <span>(19)</span></div>
+        <div class="sizes-row"><span class="sz">One size</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 1,450</b><s>Rs. 1,800</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p2">👔<span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Men · Shirts</div>
+        <div class="name">Linen Camp-Collar Shirt — Sage</div>
+        <div class="stars">★★★★★ <span>(88)</span></div>
+        <div class="sizes-row"><span class="sz">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 3,650</b><s>Rs. 4,300</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb p4">👗<span class="badge">-25%</span><span class="wish">♡</span><div class="quick">Quick view</div></div>
+      <div class="body">
+        <div class="cat-lbl">Women · Dresses</div>
+        <div class="name">Midi Slip Dress — Espresso</div>
+        <div class="stars">★★★★☆ <span>(112)</span></div>
+        <div class="sizes-row"><span class="sz">XS</span><span class="sz">S</span><span class="sz">M</span><span class="sz out">L</span></div>
+        <div class="row">
+          <div class="pr"><b>Rs. 5,620</b><s>Rs. 7,500</s></div>
+          <button class="add">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:50px">
+    <h2>The lookbook</h2>
+    <a href="#">Explore</a>
+  </div>
+
+  <div class="lookbook">
+    <div class="lb l1"><span class="ghost">🧥</span><h4>WEEKEND<br/>LAYERS</h4><p>Overshirts, knits &amp; denim</p></div>
+    <div class="lb l2"><span class="ghost">👟</span><h4>STREET<br/>EDIT</h4><p>Everyday sneakers</p></div>
+    <div class="lb l3"><span class="ghost">👜</span><h4>FINISHING<br/>TOUCHES</h4><p>Bags &amp; accessories</p></div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot">
+    <div>
+      <div class="brandline">THREAD&amp;CO</div>
+      <p>Everyday essentials with a considered fit. Designed in Karachi, made to be worn on repeat.</p>
+    </div>
+    <div><h5>Shop</h5><ul><li>Men</li><li>Women</li><li>Kids</li><li>Footwear</li></ul></div>
+    <div><h5>Help</h5><ul><li>Size guide</li><li>Returns &amp; exchange</li><li>Shipping</li><li>Track order</li></ul></div>
+    <div><h5>Follow</h5><ul><li>Instagram</li><li>Facebook</li><li>TikTok</li></ul></div>
+  </div>
+  <div class="copy"><span>© 2026 THREAD&amp;CO</span><span>Cash on delivery · Card · Stripe</span></div>
+</footer>
+
+</body>
+</html>

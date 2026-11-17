@@ -1,5 +1,47 @@
 import api from "../../api/api";
 import truncateText from "../../utils/truncateText";
+import submitGatewayForm from "../../utils/submitGatewayForm";
+
+/** Online gateways hand the customer over to an external payment page. */
+const gatewayFor = (method) => {
+  const value = (method || "").toUpperCase();
+  if (value === "JAZZCASH") return "jazzcash";
+  if (value === "EASYPAISA") return "easypaisa";
+  return null;
+};
+
+export const fetchPaymentGateways = () => async (dispatch) => {
+  try {
+    const { data } = await api.get("/public/payments/methods");
+    dispatch({ type: "SET_PAYMENT_GATEWAYS", payload: data });
+  } catch (error) {
+    console.log(error);
+    // Non-fatal: checkout simply keeps the online options disabled.
+    dispatch({
+      type: "SET_PAYMENT_GATEWAYS",
+      payload: { jazzcash: false, easypaisa: false },
+    });
+  }
+};
+
+/** Starts (or retries) an online payment for an existing order. */
+export const startGatewayPayment = (order, toast) => async (dispatch) => {
+  const gateway = gatewayFor(order?.payment?.paymentMethod);
+  try {
+    if (!gateway) {
+      throw new Error("This order is not an online payment");
+    }
+    dispatch({ type: "BUTTON_LOADER" });
+    const { data } = await api.post(`/payments/${gateway}/init`, {
+      orderId: order.orderId,
+    });
+    submitGatewayForm(data.redirectUrl, data.fields);
+  } catch (error) {
+    console.log(error);
+    toast?.error(error?.response?.data?.message || "Payment shuru nahi ho saki");
+    dispatch({ type: "IS_ERROR", payload: null });
+  }
+};
 
 export const fetchProducts = (queryString) => async (dispatch) => {
   try {
@@ -757,6 +799,11 @@ export const toggleWishlist =
  * Places an order using a Pakistani payment method.
  * COD / JazzCash / Easypaisa / Bank Transfer are recorded as pending payments.
  */
+export const fetchOrderForUser = (orderId) => async () => {
+  const { data } = await api.get(`/order/users/${orderId}`);
+  return data;
+};
+
 export const placeOrder =
   (sendData, toast, navigate) => async (dispatch) => {
     try {
@@ -775,6 +822,29 @@ export const placeOrder =
       localStorage.removeItem("cartItems");
       dispatch({ type: "CLEAR_CART" });
       dispatch({ type: "IS_SUCCESS" });
+
+      const gateway = gatewayFor(method);
+      if (gateway) {
+        toast.success("Order ban gaya — ab gateway par payment complete karein");
+        try {
+          const { data: init } = await api.post(`/payments/${gateway}/init`, {
+            orderId: data.orderId,
+          });
+          submitGatewayForm(init.redirectUrl, init.fields);
+          return;
+        } catch (initError) {
+          console.log(initError);
+          toast.error(
+            initError?.response?.data?.message ||
+              "Payment gateway shuru nahi ho saka — dobara koshish karein",
+          );
+          navigate(
+            `/order-confirm?orderId=${data.orderId}&payment=pending&gateway=${gateway}`,
+          );
+          return;
+        }
+      }
+
       toast.success("Order placed — shukriya!");
       navigate("/order-confirm", { state: { order: data } });
     } catch (error) {

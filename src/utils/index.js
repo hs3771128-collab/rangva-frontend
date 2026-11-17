@@ -73,22 +73,19 @@ export const paymentMethods = [
   {
     value: "JAZZCASH",
     label: "JazzCash",
-    description: "Send the amount to 0300 0000000 and share the transaction ID.",
+    description: "Pay with your JazzCash mobile account on the secure JazzCash page.",
+    gateway: "jazzcash",
   },
   {
     value: "EASYPAISA",
     label: "Easypaisa",
-    description: "Send the amount to 0345 0000000 and share the transaction ID.",
+    description: "Pay with your Easypaisa mobile account on the secure Easypaisa page.",
+    gateway: "easypaisa",
   },
   {
     value: "BANK_TRANSFER",
     label: "Bank Transfer",
-    description: "IBAN PK00 RANG 0000 0000 0000 0000 — Rangva Pvt Ltd.",
-  },
-  {
-    value: "CARD",
-    label: "Debit / Credit Card",
-    description: "Visa and Mastercard through our secure gateway.",
+    description: "Transfer to our account and share the receipt — order ships after verification.",
   },
 ];
 

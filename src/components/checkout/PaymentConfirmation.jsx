@@ -1,10 +1,53 @@
-import { Link, useLocation } from "react-router-dom";
-import { FaCheckCircle, FaTruck, FaWhatsapp } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import {
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaTruck,
+  FaWhatsapp,
+} from "react-icons/fa";
 import { formatPrice } from "../../utils/formatPrice";
+import { fetchOrderForUser, startGatewayPayment } from "../../store/actions";
 
 const PaymentConfirmation = () => {
   const location = useLocation();
-  const order = location.state?.order;
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
+
+  const [order, setOrder] = useState(location.state?.order || null);
+  const [loading, setLoading] = useState(false);
+
+  const queryOrderId = searchParams.get("orderId");
+  const paymentResult = searchParams.get("payment");
+
+  useEffect(() => {
+    if (order || !queryOrderId) return;
+    let active = true;
+    setLoading(true);
+    dispatch(fetchOrderForUser(queryOrderId))
+      .then((data) => {
+        if (active) setOrder(data);
+      })
+      .catch(() => {
+        if (active) setOrder(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [dispatch, order, queryOrderId]);
+
+  if (loading && !order) {
+    return (
+      <div className="rangva-container px-4 py-24 text-center text-[13px] text-muted">
+        Order confirm ho raha hai…
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -23,9 +66,12 @@ const PaymentConfirmation = () => {
     );
   }
 
+  const paymentMethod = order.payment?.paymentMethod || "";
   const isCod =
-    order.payment?.paymentMethod === "CASH_ON_DELIVERY" ||
-    order.payment?.paymentMethod === "COD";
+    paymentMethod === "CASH_ON_DELIVERY" || paymentMethod === "COD";
+  const isGateway = paymentMethod === "JAZZCASH" || paymentMethod === "EASYPAISA";
+  const isPaid = order.payment?.pgStatus === "PAID" || order.orderStatus === "CONFIRMED";
+  const paymentFailed = paymentResult === "failed" || order.payment?.pgStatus === "FAILED";
 
   const items = order.orderItems || [];
   const itemsTotal = items.reduce(
@@ -34,22 +80,46 @@ const PaymentConfirmation = () => {
   );
   const delivery = Math.max(0, Number(order.totalAmount || 0) - itemsTotal);
 
+  const heading = isCod
+    ? "Order placed"
+    : isPaid
+      ? "Order confirmed"
+      : isGateway
+        ? "Payment pending"
+        : "Order placed";
+
+  const description = isCod
+    ? "Aap ka order book ho gaya hai. Rider delivery ke waqt cash le ga — abhi koi payment nahi."
+    : isPaid
+      ? "Payment mil gayi hai aur aap ka order confirm ho gaya. Hum jald dispatch karenge."
+      : paymentFailed
+        ? "Payment complete nahi hui. Aap ka order mehfooz hai — neeche 'Pay now' se dobara koshish karein."
+        : "Aap ka order save ho gaya hai. Payment complete karne ke liye neeche 'Pay now' dabayein.";
+
   return (
     <div className="rangva-container px-4 lg:px-6 py-12 max-w-3xl">
       <div className="bg-white border border-line rounded-2xl p-7 sm:p-10 text-center">
-        <div className="w-16 h-16 rounded-full bg-[#edf2ea] text-[#3f5138] grid place-items-center mx-auto mb-5">
-          <FaCheckCircle size={30} />
+        <div
+          className={`w-16 h-16 rounded-full grid place-items-center mx-auto mb-5 ${
+            paymentFailed
+              ? "bg-[#fbeceb] text-[#b03a32]"
+              : "bg-[#edf2ea] text-[#3f5138]"
+          }`}
+        >
+          {paymentFailed ? (
+            <FaExclamationCircle size={28} />
+          ) : (
+            <FaCheckCircle size={30} />
+          )}
         </div>
         <div className="text-[10px] tracking-[0.22em] uppercase text-terra mb-2">
           Shukriya!
         </div>
         <h1 className="font-display text-[30px] sm:text-[38px] leading-none text-ink">
-          {isCod ? "Order placed" : "Order confirmed"}
+          {heading}
         </h1>
-        <p className="text-[13px] text-muted mt-3 max-w-[420px] mx-auto leading-6">
-          {isCod
-            ? "Aap ka order book ho gaya hai. Rider delivery ke waqt cash le ga — abhi koi payment nahi."
-            : "Aap ka order confirm ho gaya hai. Payment details email par bhej di gayi hain."}
+        <p className="text-[13px] text-muted mt-3 max-w-[440px] mx-auto leading-6">
+          {description}
         </p>
 
         <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 bg-ivory border border-line rounded-xl px-5 py-3 text-[12px]">
@@ -67,7 +137,21 @@ const PaymentConfirmation = () => {
           <span className="text-muted">
             Status: <b className="text-ink">{order.orderStatus}</b>
           </span>
+          {order.payment?.pgStatus && (
+            <span className="text-muted">
+              Payment: <b className="text-ink">{order.payment.pgStatus}</b>
+            </span>
+          )}
         </div>
+
+        {isGateway && !isPaid && order.orderStatus !== "CANCELLED" && (
+          <button
+            onClick={() => dispatch(startGatewayPayment(order, toast))}
+            className="mt-5 inline-flex h-11 px-7 items-center rounded-full bg-terra text-white text-[11.5px] tracking-[0.16em] uppercase font-semibold hover:bg-terra-dark transition"
+          >
+            Pay now
+          </button>
+        )}
       </div>
 
       {/* Items */}
@@ -104,7 +188,7 @@ const PaymentConfirmation = () => {
           </div>
           <div className="flex justify-between items-baseline pt-1">
             <span className="text-[11.5px] tracking-[0.14em] uppercase font-semibold text-ink">
-              {isCod ? "Cash to pay on delivery" : "Total paid"}
+              {isCod ? "Cash to pay on delivery" : isPaid ? "Total paid" : "Total payable"}
             </span>
             <span className="text-[20px] font-bold text-ink">
               {formatPrice(order.totalAmount)}

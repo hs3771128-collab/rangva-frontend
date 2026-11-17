@@ -1,14 +1,22 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaCheckCircle } from "react-icons/fa";
-import { addPaymentMethod, createUserCart } from "../../store/actions";
+import { FaCheckCircle, FaLock } from "react-icons/fa";
+import {
+  addPaymentMethod,
+  createUserCart,
+  fetchPaymentGateways,
+} from "../../store/actions";
 import { paymentMethods } from "../../utils";
 
 const PaymentMethod = () => {
   const dispatch = useDispatch();
-  const { paymentMethod } = useSelector((state) => state.payment);
+  const { paymentMethod, gateways } = useSelector((state) => state.payment);
   const { cart, cartId } = useSelector((state) => state.carts);
   const { errorMessage } = useSelector((state) => state.errors);
+
+  useEffect(() => {
+    dispatch(fetchPaymentGateways());
+  }, [dispatch]);
 
   useEffect(() => {
     if (cart?.length > 0 && !cartId && !errorMessage) {
@@ -36,18 +44,26 @@ const PaymentMethod = () => {
         <div className="space-y-2.5">
           {paymentMethods.map((method) => {
             const active = paymentMethod === method.value;
+            const available = !method.gateway || gateways?.[method.gateway];
             return (
               <button
                 key={method.value}
                 type="button"
-                onClick={() => dispatch(addPaymentMethod(method.value))}
+                disabled={!available}
+                onClick={() => available && dispatch(addPaymentMethod(method.value))}
                 className={`w-full text-left flex items-start gap-3 p-3.5 rounded-xl border transition ${
-                  active ? "border-terra bg-[#fbf0ec]" : "border-line bg-white hover:border-ink/30"
+                  active
+                    ? "border-terra bg-[#fbf0ec]"
+                    : available
+                      ? "border-line bg-white hover:border-ink/30"
+                      : "border-line bg-ivory opacity-60 cursor-not-allowed"
                 }`}
               >
                 <span
                   className={`mt-0.5 w-5 h-5 rounded-full border grid place-items-center shrink-0 ${
-                    active ? "border-terra bg-terra text-white" : "border-[#cdc3b6] text-transparent"
+                    active
+                      ? "border-terra bg-terra text-white"
+                      : "border-[#cdc3b6] text-transparent"
                   }`}
                 >
                   <FaCheckCircle size={11} />
@@ -57,7 +73,9 @@ const PaymentMethod = () => {
                     {method.label}
                   </span>
                   <span className="block text-[11.5px] text-muted mt-0.5">
-                    {method.description}
+                    {available
+                      ? method.description
+                      : "Filhal available nahi — gateway configure nahi hua."}
                   </span>
                 </span>
               </button>
@@ -65,11 +83,23 @@ const PaymentMethod = () => {
           })}
         </div>
 
-        {selected && selected.value !== "CASH_ON_DELIVERY" && selected.value !== "CARD" && (
+        {selected?.gateway && (
+          <div className="mt-4 bg-ivory border border-line rounded-xl p-4 text-[11.5px] text-[#5f544a] flex items-start gap-2.5">
+            <FaLock className="text-terra mt-0.5 shrink-0" size={11} />
+            <span>
+              <b className="text-ink">{selected.label} secure page:</b> aap ko{" "}
+              {selected.label} ki secure page par bheja jayega. Payment complete
+              hone par order khud confirm ho jayega — card details hamari site
+              par nahi aati.
+            </span>
+          </div>
+        )}
+
+        {selected?.value === "BANK_TRANSFER" && (
           <div className="mt-4 bg-ivory border border-line rounded-xl p-4 text-[11.5px] text-[#5f544a]">
-            <b className="text-ink">Order place karne ke baad:</b> payment ki
-            tafseel aur transaction ID WhatsApp/email par share karein. Order
-            tab confirm hoga jab payment receive ho jaye.
+            <b className="text-ink">Order place karne ke baad:</b> bank transfer
+            karein aur receipt WhatsApp/email par share karein. Order tab
+            confirm hoga jab payment verify ho jaye.
           </div>
         )}
 

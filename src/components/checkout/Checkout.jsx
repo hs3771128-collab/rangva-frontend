@@ -190,7 +190,13 @@ const Checkout = () => {
               disabled={btnLoader}
               className="h-11 px-7 rounded-full bg-terra text-white text-[11.5px] tracking-[0.16em] uppercase font-semibold hover:bg-terra-dark transition disabled:opacity-60"
             >
-              {btnLoader ? "Placing…" : "Place order"}
+              {btnLoader
+                ? "Placing…"
+                : paymentMethod === "JAZZCASH"
+                  ? "Pay with JazzCash"
+                  : paymentMethod === "EASYPAISA"
+                    ? "Pay with Easypaisa"
+                    : "Place order"}
             </button>
           )}
         </div>

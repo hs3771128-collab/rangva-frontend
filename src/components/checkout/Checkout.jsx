@@ -196,7 +196,9 @@ const Checkout = () => {
                   ? "Pay with JazzCash"
                   : paymentMethod === "EASYPAISA"
                     ? "Pay with Easypaisa"
-                    : "Place order"}
+                    : paymentMethod === "SAFEPAY"
+                      ? "Pay with card"
+                      : "Place order"}
             </button>
           )}
         </div>

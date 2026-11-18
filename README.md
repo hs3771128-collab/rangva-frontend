@@ -1,6 +1,6 @@
 # Rangva — Frontend
 
-**Rangva** is a Pakistani hybrid store that sells **fashion** (clothing, footwear, accessories) and **beauty** (skincare, makeup, haircare, fragrance) in one unified storefront - with a fully Pakistani checkout: PKR pricing, cash on delivery, JazzCash / Easypaisa hosted checkout, and bank transfer, plus province + city based addresses.
+**Rangva** is a Pakistani hybrid store that sells **fashion** (clothing, footwear, accessories) and **beauty** (skincare, makeup, haircare, fragrance) in one unified storefront - with a fully Pakistani checkout: PKR pricing, cash on delivery, JazzCash / Easypaisa hosted checkout, Safepay card checkout (Visa / Mastercard), and bank transfer, plus province + city based addresses.
 
 > فیشن اور خوبصورتی
 
@@ -51,7 +51,7 @@ Backend must run on `http://localhost:8080` (see the `rangva-backend` repo).
 - **Cart** — variant aware, quantity limits, delivery fee logic (free over Rs. 3,000, else Rs. 199).
 - **3-step checkout** — Address → Payment → Review, with a sticky summary bar and order placement.
 - **Pakistani addresses** — provinces, city suggestions, area, `03XXXXXXXXX` phone validation, country fixed to Pakistan.
-- **Pakistani payments** - Cash on Delivery (default), JazzCash and Easypaisa hosted checkout (cards and mobile accounts), plus bank transfer.
+- **Pakistani payments** - Cash on Delivery (default), JazzCash and Easypaisa hosted checkout, card checkout through Safepay (Visa / Mastercard), plus bank transfer.
 - **Gateway redirect + verification** - online orders stay `PENDING_PAYMENT` until the backend verifies the signed gateway callback; failed payments can be retried from the confirmation page.
 - **Order confirmation** - COD vs prepaid messaging, itemised order with delivery fee.
 - **Admin** — products (create/update with brand, department and variants), categories, orders, sellers.

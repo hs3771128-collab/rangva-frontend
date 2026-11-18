@@ -1,7 +1,7 @@
 const initialState = {
     paymentMethod: null,
     // Which online gateways the backend has credentials for.
-    gateways: { jazzcash: false, easypaisa: false },
+    gateways: { jazzcash: false, easypaisa: false, safepay: false },
 };
 
 export const paymentMethodReducer = (state = initialState, action) => {

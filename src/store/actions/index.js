@@ -7,6 +7,7 @@ const gatewayFor = (method) => {
   const value = (method || "").toUpperCase();
   if (value === "JAZZCASH") return "jazzcash";
   if (value === "EASYPAISA") return "easypaisa";
+  if (value === "SAFEPAY") return "safepay";
   return null;
 };
 
@@ -19,10 +20,25 @@ export const fetchPaymentGateways = () => async (dispatch) => {
     // Non-fatal: checkout simply keeps the online options disabled.
     dispatch({
       type: "SET_PAYMENT_GATEWAYS",
-      payload: { jazzcash: false, easypaisa: false },
+      payload: { jazzcash: false, easypaisa: false, safepay: false },
     });
   }
 };
+
+/** Asks the backend to confirm a Safepay payment after the redirect back. */
+export const verifySafepayPayment =
+  (tracker, orderId) => async () => {
+    try {
+      const { data } = await api.post("/payments/safepay/verify", {
+        tracker,
+        orderId,
+      });
+      return data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
 /** Starts (or retries) an online payment for an existing order. */
 export const startGatewayPayment = (order, toast) => async (dispatch) => {

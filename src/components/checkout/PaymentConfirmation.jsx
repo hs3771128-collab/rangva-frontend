@@ -9,7 +9,11 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import { formatPrice } from "../../utils/formatPrice";
-import { fetchOrderForUser, startGatewayPayment } from "../../store/actions";
+import {
+  fetchOrderForUser,
+  startGatewayPayment,
+  verifySafepayPayment,
+} from "../../store/actions";
 
 const PaymentConfirmation = () => {
   const location = useLocation();
@@ -20,26 +24,44 @@ const PaymentConfirmation = () => {
   const [loading, setLoading] = useState(false);
 
   const queryOrderId = searchParams.get("orderId");
+  const tracker = searchParams.get("tracker");
   const paymentResult = searchParams.get("payment");
 
   useEffect(() => {
-    if (order || !queryOrderId) return;
+    if (order) return;
+    if (!queryOrderId && !tracker) return;
+
     let active = true;
     setLoading(true);
-    dispatch(fetchOrderForUser(queryOrderId))
-      .then((data) => {
+
+    (async () => {
+      let orderId = queryOrderId;
+      try {
+        // Safepay sends the customer back with a tracker, usually before its
+        // webhook arrives — ask the backend to confirm the payment first.
+        if (tracker) {
+          const result = await dispatch(verifySafepayPayment(tracker, queryOrderId));
+          if (result?.orderId) orderId = String(result.orderId);
+          if (result?.paid) {
+            toast.success("Payment confirm ho gayi");
+          } else if (result?.status === "FAILED") {
+            toast.error(result?.message || "Payment nahi hui — dobara koshish karein");
+          }
+        }
+        if (!orderId) return;
+        const data = await dispatch(fetchOrderForUser(orderId));
         if (active) setOrder(data);
-      })
-      .catch(() => {
+      } catch {
         if (active) setOrder(null);
-      })
-      .finally(() => {
+      } finally {
         if (active) setLoading(false);
-      });
+      }
+    })();
+
     return () => {
       active = false;
     };
-  }, [dispatch, order, queryOrderId]);
+  }, [dispatch, order, queryOrderId, tracker]);
 
   if (loading && !order) {
     return (
@@ -69,9 +91,15 @@ const PaymentConfirmation = () => {
   const paymentMethod = order.payment?.paymentMethod || "";
   const isCod =
     paymentMethod === "CASH_ON_DELIVERY" || paymentMethod === "COD";
-  const isGateway = paymentMethod === "JAZZCASH" || paymentMethod === "EASYPAISA";
+  const isGateway =
+    paymentMethod === "JAZZCASH" ||
+    paymentMethod === "EASYPAISA" ||
+    paymentMethod === "SAFEPAY";
   const isPaid = order.payment?.pgStatus === "PAID" || order.orderStatus === "CONFIRMED";
-  const paymentFailed = paymentResult === "failed" || order.payment?.pgStatus === "FAILED";
+  const paymentFailed =
+    paymentResult === "failed" ||
+    order.payment?.pgStatus === "FAILED" ||
+    order.orderStatus === "PAYMENT_FAILED";
 
   const items = order.orderItems || [];
   const itemsTotal = items.reduce(

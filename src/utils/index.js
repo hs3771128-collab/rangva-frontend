@@ -83,6 +83,12 @@ export const paymentMethods = [
     gateway: "easypaisa",
   },
   {
+    value: "SAFEPAY",
+    label: "Debit / Credit Card",
+    description: "Visa & Mastercard via Safepay's secure checkout — 3-D Secure supported.",
+    gateway: "safepay",
+  },
+  {
     value: "BANK_TRANSFER",
     label: "Bank Transfer",
     description: "Transfer to our account and share the receipt — order ships after verification.",

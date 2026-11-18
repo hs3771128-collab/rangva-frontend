@@ -50,7 +50,7 @@ const Footer = () => {
           <ul className="space-y-2.5 text-[13px]">
             <li><Link className="hover:text-white" to="/about">About Rangva</Link></li>
             <li><Link className="hover:text-white" to="/contact">Contact us</Link></li>
-            <li><Link className="hover:text-white" to="/contact">Track my order</Link></li>
+            <li><Link className="hover:text-white" to="/track-order">Track my order</Link></li>
             <li><Link className="hover:text-white" to="/contact">Returns &amp; exchange</Link></li>
             <li><Link className="hover:text-white" to="/contact">Shipping policy</Link></li>
             <li><Link className="hover:text-white" to="/contact">Size guide</Link></li>

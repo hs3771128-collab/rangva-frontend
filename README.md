@@ -55,6 +55,7 @@ Backend must run on `http://localhost:8080` (see the `rangva-backend` repo).
 - **Gateway redirect + verification** - online orders stay `PENDING_PAYMENT` until the backend verifies the signed gateway callback; failed payments can be retried from the confirmation page.
 - **Local test mode** - with the backend's `PAYMENTS_TEST_MODE=true`, JazzCash / Easypaisa / card are all clickable locally through `/mock-gateway` (approve or fail a simulated payment). No real money moves; the backend refuses test mode under a production profile.
 - **Order confirmation** - COD vs prepaid messaging, itemised order with delivery fee.
+- **Order tracking** - public `/track-order` page (no login): Order ID plus the checkout email or phone shows status, a delivery timeline, items, payment method and expected delivery date. Linked from the footer, the confirmation page and the "track" hint on receipts. Wrong order/contact shows one generic message so order ids cannot be guessed.
 - **Admin** — products (create/update with brand, department and variants), categories, orders, sellers.
 
 ## Project structure

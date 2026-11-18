@@ -20,6 +20,7 @@ import Sellers from './components/admin/sellers/Sellers'
 import AdminProducts from './components/admin/products/AdminProducts'
 import Category from './components/admin/categories/Category'
 import Orders from './components/admin/orders/Orders'
+import TrackOrder from './components/orders/TrackOrder'
 import Wishlist from './components/wishlist/Wishlist'
 import Footer from './components/shared/Footer'
 
@@ -65,6 +66,7 @@ function App() {
           <Route path='/wishlist' element={<Wishlist />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
+          <Route path='/track-order' element={<TrackOrder />} />
           <Route path='/cart' element={<Cart />} />
 
           <Route path='/' element={<PrivateRoute />}>

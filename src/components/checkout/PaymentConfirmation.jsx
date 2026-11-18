@@ -228,12 +228,24 @@ const PaymentConfirmation = () => {
           <FaTruck className="text-terra mt-0.5 shrink-0" size={12} />
           <span>
             Delivery 2–4 working days (Karachi, Lahore, Islamabad) — baaki
-            shehron me 4–6 din. Order ID ke saath track kar sakte hain.
+            shehron me 4–6 din.{" "}
+            <Link
+              to={`/track-order?orderId=${order.orderId}`}
+              className="font-semibold text-ink underline decoration-terra decoration-2 underline-offset-2 hover:text-terra transition"
+            >
+              Order track karein
+            </Link>
           </span>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+        <Link
+          to={`/track-order?orderId=${order.orderId}`}
+          className="inline-flex h-11 px-7 items-center justify-center gap-2 rounded-full bg-terra text-white text-[11.5px] tracking-[0.16em] uppercase font-semibold hover:bg-terra-dark transition"
+        >
+          <FaTruck size={12} /> Track order
+        </Link>
         <Link
           to="/products"
           className="inline-flex h-11 px-7 items-center justify-center rounded-full bg-ink text-white text-[11.5px] tracking-[0.16em] uppercase font-semibold hover:bg-terra transition"

@@ -42,8 +42,7 @@ export const verifySafepayPayment =
 
 /** Development only: approves or fails a simulated gateway payment. */
 export const completeMockPayment =
-  (orderId, gateway, success) => async () => {
-    try {
+  (orderId, gateway, success) => async () => {    try {
       const { data } = await api.post("/payments/mock/complete", {
         orderId,
         gateway,
@@ -915,3 +914,26 @@ export const placeOrder =
       dispatch({ type: "IS_ERROR", payload: null });
     }
   };
+
+/**
+ * Public order tracking. The customer proves the order is theirs with the
+ * email or phone used at checkout, so no login is needed.
+ * Returns the tracking payload, or `{ error }` with a ready-to-show message.
+ */
+export const trackOrder = (orderId, contact) => async () => {
+  try {
+    const parsedId = Number(String(orderId).replace(/[^0-9]/g, ""));
+    const { data } = await api.post("/public/orders/track", {
+      orderId: parsedId,
+      contact: String(contact || "").trim(),
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+    return {
+      error:
+        error?.response?.data?.message ||
+        "Order track nahi ho saka — dobara koshish karein",
+    };
+  }
+};

@@ -20,17 +20,26 @@ const OrderSummary = ({ totalPrice, cart, address, paymentMethod }) => {
           <h3 className="text-[10px] tracking-[0.2em] uppercase text-muted mb-2.5">
             Delivery address
           </h3>
-          <div className="text-[13px] font-semibold text-ink">
-            {address?.buildingName || address?.area || "Home"}
-          </div>
-          <p className="text-[12.5px] text-[#5f544a] mt-1 leading-6">
-            {[address?.street, address?.area, address?.city, address?.state, address?.pincode]
-              .filter(Boolean)
-              .join(", ")}
-          </p>
-          <p className="text-[12px] text-muted mt-1.5 flex items-center gap-1.5">
-            <FaPhoneAlt size={10} /> {address?.phone || "—"}
-          </p>
+          {address?.addressId ? (
+            <>
+              <div className="text-[13px] font-semibold text-ink">
+                {address?.buildingName || address?.area || "Home"}
+              </div>
+              <p className="text-[12.5px] text-[#5f544a] mt-1 leading-6">
+                {[address?.street, address?.area, address?.city, address?.state, address?.pincode]
+                  .filter(Boolean)
+                  .join(", ")}
+              </p>
+              <p className="text-[12px] text-muted mt-1.5 flex items-center gap-1.5">
+                <FaPhoneAlt size={10} /> {address?.phone || "—"}
+              </p>
+            </>
+          ) : (
+            <p className="text-[12.5px] text-terra">
+              Koi delivery address select nahi — Address step par ja kar select
+              karein.
+            </p>
+          )}
         </div>
 
         {/* Items */}

@@ -32,8 +32,11 @@ const Checkout = () => {
 
   const handleBack = () => setActiveStep((s) => Math.max(0, s - 1));
 
+  // The redux state can briefly hold an empty value, so check the id itself.
+  const hasAddress = Boolean(selectedUserCheckoutAddress?.addressId);
+
   const handleNext = () => {
-    if (activeStep === 0 && !selectedUserCheckoutAddress) {
+    if (activeStep === 0 && !hasAddress) {
       toast.error("Pehle delivery address select karein");
       return;
     }
@@ -45,7 +48,7 @@ const Checkout = () => {
   };
 
   const handlePlaceOrder = () => {
-    if (!selectedUserCheckoutAddress) {
+    if (!hasAddress) {
       toast.error("Delivery address select karein");
       setActiveStep(0);
       return;
@@ -177,7 +180,7 @@ const Checkout = () => {
             <button
               onClick={handleNext}
               disabled={
-                (activeStep === 0 && !selectedUserCheckoutAddress) ||
+                (activeStep === 0 && !hasAddress) ||
                 (activeStep === 1 && !paymentMethod)
               }
               className="h-11 px-7 rounded-full bg-ink text-white text-[11.5px] tracking-[0.16em] uppercase font-semibold hover:bg-terra transition disabled:opacity-40 disabled:cursor-not-allowed"

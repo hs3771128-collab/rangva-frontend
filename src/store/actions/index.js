@@ -326,8 +326,16 @@ export const addUpdateUserAddress =
     try {
       if (!addressId) {
         const { data } = await api.post("/addresses", sendData);
+        // A brand-new address is what the customer wants to use right away.
+        if (data?.addressId) {
+          dispatch(selectUserCheckoutAddress(data));
+        }
       } else {
-        await api.put(`/addresses/${addressId}`, sendData);
+        const { data } = await api.put(`/addresses/${addressId}`, sendData);
+        const selected = getState().auth.selectedUserCheckoutAddress;
+        if (data?.addressId && selected?.addressId === data.addressId) {
+          dispatch(selectUserCheckoutAddress(data));
+        }
       }
       dispatch(getUserAddresses());
       toast.success("Address saved successfully");
@@ -347,6 +355,23 @@ export const getUserAddresses = () => async (dispatch, getState) => {
     dispatch({ type: "IS_FETCHING" });
     const { data } = await api.get(`/users/addresses`);
     dispatch({ type: "USER_ADDRESS", payload: data });
+
+    // Keep the checkout usable: if nothing is selected (or the selected
+    // address was deleted) fall back to the first saved address instead of
+    // letting the customer reach Review without a delivery address.
+    const selected = getState().auth.selectedUserCheckoutAddress;
+    const stillExists =
+      selected?.addressId &&
+      Array.isArray(data) &&
+      data.some((a) => a.addressId === selected.addressId);
+    if (!stillExists) {
+      if (Array.isArray(data) && data.length > 0) {
+        dispatch(selectUserCheckoutAddress(data[0]));
+      } else {
+        dispatch(clearCheckoutAddress());
+      }
+    }
+
     dispatch({ type: "IS_SUCCESS" });
   } catch (error) {
     console.log(error);
@@ -839,6 +864,11 @@ export const fetchOrderForUser = (orderId) => async () => {
 export const placeOrder =
   (sendData, toast, navigate) => async (dispatch) => {
     try {
+      if (!sendData?.addressId) {
+        toast.error("Delivery address select karein");
+        dispatch({ type: "IS_ERROR", payload: null });
+        return;
+      }
       dispatch({ type: "BUTTON_LOADER" });
       const method = sendData.paymentMethod || "CASH_ON_DELIVERY";
       const payload = {

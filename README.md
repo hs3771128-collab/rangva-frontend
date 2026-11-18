@@ -83,6 +83,16 @@ Ivory `#FBF7F2` base, ink `#1C1A17` text, terracotta `#C05B45` accent, with sand
 
 Mirrored in the backend so cart, checkout and order totals always agree.
 
+## Deployment (free)
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/hs3771128-collab/rangva-frontend)
+
+Permanent free stack: **Netlify** (this app) + **Render** (API) + **Neon** (PostgreSQL). Poori step-by-step guide backend repo me hai: [rangva-backend/DEPLOY.md](https://github.com/hs3771128-collab/rangva-backend/blob/main/DEPLOY.md).
+
+- Build command `npm run build`, publish directory `dist` — `netlify.toml` (SPA redirects + Node 20 + default API URL) committed hai.
+- Production env: `VITE_BACK_END_URL=https://<render-host>` (no trailing slash).
+- Login works across domains: the backend returns the JWT in the response and `src/api/api.js` sends it as `Authorization: Bearer ...`, so third-party cookie blocking does not break auth.
+
 ## Notes
 
 - Prices are stored as plain numbers and displayed with `formatPrice()` as `Rs. 2,190`.

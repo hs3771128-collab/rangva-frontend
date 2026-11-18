@@ -95,6 +95,15 @@ const PaymentMethod = () => {
           </div>
         )}
 
+        {gateways?.testMode && (
+          <div className="mt-4 bg-[#fff6e5] border border-[#f0dcb4] rounded-xl p-4 text-[11.5px] text-[#7a5a1e]">
+            <b>Test mode on:</b> JazzCash, Easypaisa aur card sab simulate honge.
+            Koi asli paisa nahi katega — production se pehle
+            <code className="mx-1 rounded bg-white/70 px-1">PAYMENTS_TEST_MODE</code>
+            off kar dein.
+          </div>
+        )}
+
         {selected?.value === "BANK_TRANSFER" && (
           <div className="mt-4 bg-ivory border border-line rounded-xl p-4 text-[11.5px] text-[#5f544a]">
             <b className="text-ink">Order place karne ke baad:</b> bank transfer

@@ -40,6 +40,22 @@ export const verifySafepayPayment =
     }
   };
 
+/** Development only: approves or fails a simulated gateway payment. */
+export const completeMockPayment =
+  (orderId, gateway, success) => async () => {
+    try {
+      const { data } = await api.post("/payments/mock/complete", {
+        orderId,
+        gateway,
+        success,
+      });
+      return data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
 /** Starts (or retries) an online payment for an existing order. */
 export const startGatewayPayment = (order, toast) => async (dispatch) => {
   const gateway = gatewayFor(order?.payment?.paymentMethod);

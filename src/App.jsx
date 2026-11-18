@@ -13,6 +13,7 @@ import PrivateRoute from './components/PrivateRoute'
 import Register from './components/auth/Register'
 import Checkout from './components/checkout/Checkout'
 import PaymentConfirmation from './components/checkout/PaymentConfirmation'
+import MockGateway from './components/checkout/MockGateway'
 import AdminLayout from './components/admin/AdminLayout'
 import DashBoard from './components/admin/dashboard/DashBoard'
 import Sellers from './components/admin/sellers/Sellers'
@@ -31,6 +32,7 @@ function Layout({ children }) {
   const hideFooterRoutes = [
     "/checkout",
     "/order-confirm",
+    "/mock-gateway",
     "/admin",
   ];
 
@@ -68,6 +70,7 @@ function App() {
           <Route path='/' element={<PrivateRoute />}>
             <Route path='/checkout' element={<Checkout />} />
             <Route path='/order-confirm' element={<PaymentConfirmation />} />
+            <Route path='/mock-gateway' element={<MockGateway />} />
           </Route>
 
           <Route path='/' element={<PrivateRoute publicPage />}>

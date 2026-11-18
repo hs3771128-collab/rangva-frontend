@@ -85,7 +85,7 @@ export const paymentMethods = [
   {
     value: "SAFEPAY",
     label: "Debit / Credit Card",
-    description: "Visa & Mastercard via Safepay's secure checkout — 3-D Secure supported.",
+    description: "Visa, Mastercard & PayPak via Safepay's secure checkout — 3-D Secure supported.",
     gateway: "safepay",
   },
   {

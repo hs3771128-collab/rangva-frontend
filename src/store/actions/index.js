@@ -727,7 +727,7 @@ export const getAllSellersDashboard =
     const { user } = getState().auth;
     try {
       dispatch({ type: "IS_FETCHING" });
-      const { data } = await api.get(`/auth/sellers?${queryString}`);
+      const { data } = await api.get(`/admin/sellers?${queryString}`);
       dispatch({
         type: "GET_SELLERS",
         payload: data["content"],
@@ -752,7 +752,8 @@ export const addNewDashboardSeller =
   (sendData, toast, reset, setOpen, setLoader) => async (dispatch) => {
     try {
       setLoader(true);
-      await api.post("/auth/signup", sendData);
+      // Admin-only endpoint; public signup always creates a plain customer.
+      await api.post("/admin/sellers", sendData);
       reset();
       toast.success("Seller registered successfully!");
 

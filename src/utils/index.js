@@ -1,6 +1,8 @@
 import { FaBoxOpen, FaHome, FaShoppingCart, FaStore, FaThList } from "react-icons/fa";
 
-const API = import.meta.env.VITE_BACK_END_URL || "http://localhost:8080";
+// An empty value means "same origin": the API is served under /api on the
+// same host (useful when the storefront and API share one domain).
+const API = import.meta.env.VITE_BACK_END_URL ?? "http://localhost:8080";
 export const imageUrl = (fileName) => `${API}/images/${fileName}`;
 
 /** Three promo tiles shown under the hero on the home page. */

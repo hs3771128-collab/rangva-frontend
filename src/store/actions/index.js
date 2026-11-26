@@ -2,6 +2,22 @@ import api from "../../api/api";
 import truncateText from "../../utils/truncateText";
 import submitGatewayForm from "../../utils/submitGatewayForm";
 
+/**
+ * Backend errors arrive in a few shapes: { message }, { description } or a
+ * field -> message map from bean validation. Show something useful either way.
+ */
+const apiErrorMessage = (error, fallback) => {
+  const data = error?.response?.data;
+  if (!data) return fallback;
+  if (typeof data === "string") return data;
+  return (
+    data.message ||
+    data.description ||
+    Object.values(data).find((value) => typeof value === "string") ||
+    fallback
+  );
+};
+
 /** Online gateways hand the customer over to an external payment page. */
 const gatewayFor = (method) => {
   const value = (method || "").toUpperCase();
@@ -272,7 +288,15 @@ export const authenticateSignInUser =
       await dispatch(getUserCart());
       reset();
       toast.success("Login Success");
-      navigate("/");
+      // Sellers and admins land on their own panel; customers go to the store.
+      const roles = data?.roles || [];
+      if (roles.includes("ROLE_ADMIN")) {
+        navigate("/admin");
+      } else if (roles.includes("ROLE_SELLER")) {
+        navigate("/seller");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Internal Server Error");
@@ -479,6 +503,24 @@ export const analyticsAction = () => async (dispatch, getState) => {
   }
 };
 
+export const sellerAnalyticsAction = () => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get("/seller/app/analytics");
+    dispatch({
+      type: "FETCH_SELLER_ANALYTICS",
+      payload: data,
+    });
+    dispatch({ type: "IS_SUCCESS" });
+  } catch (error) {
+    dispatch({
+      type: "IS_ERROR",
+      payload:
+        error?.response?.data?.message || "Failed to fetch seller analytics",
+    });
+  }
+};
+
 export const getOrdersForDashboard =
   (queryString, isAdmin) => async (dispatch) => {
     try {
@@ -515,7 +557,7 @@ export const updateOrderStatusFromDashboard =
         status: orderStatus,
       });
       toast.success(data.message || "Order updated successfully");
-      await dispatch(getOrdersForDashboard());
+      await dispatch(getOrdersForDashboard("", isAdmin));
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Internal Server Error");
@@ -561,10 +603,10 @@ export const updateProductFromDashboard =
       reset();
       setLoader(false);
       setOpen(false);
-      await dispatch(dashboardProductsAction());
+      await dispatch(dashboardProductsAction("", isAdmin));
     } catch (error) {
       toast.error(
-        error?.response?.data?.description || "Product update failed",
+        apiErrorMessage(error, "Product update failed"),
       );
     }
   };
@@ -579,11 +621,11 @@ export const addNewProductFromDashboard =
       toast.success("Product created successfully");
       reset();
       setOpen(false);
-      await dispatch(dashboardProductsAction());
+      await dispatch(dashboardProductsAction("", isAdmin));
     } catch (error) {
       console.error(error);
       toast.error(
-        error?.response?.data?.description || "Product creation failed",
+        apiErrorMessage(error, "Product creation failed"),
       );
     } finally {
       setLoader(false);
@@ -600,7 +642,7 @@ export const deleteProduct =
       toast.success("Product deleted successfully");
       setLoader(false);
       setOpenDeleteModal(false);
-      await dispatch(dashboardProductsAction());
+      await dispatch(dashboardProductsAction("", isAdmin));
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Some Error Occured");
@@ -617,10 +659,10 @@ export const updateProductImageFromDashboard =
       toast.success("Image upload successful");
       setLoader(false);
       setOpen(false);
-      await dispatch(dashboardProductsAction()); // by this product list get refreshed or we fetch the product again
+      await dispatch(dashboardProductsAction("", isAdmin)); // by this product list get refreshed or we fetch the product again
     } catch (error) {
       toast.error(
-        error?.response?.data?.description || "Product Image upload failed",
+        apiErrorMessage(error, "Product Image upload failed"),
       );
     }
   };

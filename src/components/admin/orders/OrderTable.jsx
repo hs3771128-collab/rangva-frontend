@@ -1,6 +1,7 @@
 import { DataGrid } from '@mui/x-data-grid'
 import { adminOrderTableColumn } from '../../helper/tableColumn';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import Modal from '../../shared/Modal';
 import UpdateOrderForm from './UpdateOrderForm';
@@ -9,6 +10,8 @@ const OrderTable = ({ adminOrder, pagination }) => {
   const [updateOpenModal, setUpdateOpenModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
   const [loader, setLoader] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+  const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(
     pagination?.pageNumber + 1 || 1
@@ -43,7 +46,7 @@ const handleEdit = (order) => {
   return (
     <div>
       <h1 className='text-slate-800 text-3xl text-center font-bold pb-6 uppercase'>
-        All Orders
+        {isAdmin ? "All Orders" : "My Orders"}
       </h1>
 
       <div>

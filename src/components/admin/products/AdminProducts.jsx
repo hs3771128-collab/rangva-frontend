@@ -118,7 +118,7 @@ const onDeleteHandler = () => {
 
       {!emptyProduct && (
         <h1 className='text-slate-800 text-3xl text-center font-bold pb-6 uppercase'>
-          All Products
+          {isAdmin ? "All Products" : "My Products"}
         </h1>
       )}
       {isLoading ? (

@@ -1,5 +1,6 @@
 const initialState = {
     analytics: {},
+    sellerAnalytics: {},
 };
 
 export const adminReducer = (state = initialState, action) => {
@@ -9,7 +10,13 @@ export const adminReducer = (state = initialState, action) => {
                 ...state,
                 analytics: action.payload,
             };
-            
+
+        case "FETCH_SELLER_ANALYTICS":
+            return {
+                ...state,
+                sellerAnalytics: action.payload,
+            };
+
         default:
             return state;
     }

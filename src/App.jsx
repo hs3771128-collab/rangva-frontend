@@ -23,6 +23,7 @@ import Orders from './components/admin/orders/Orders'
 import TrackOrder from './components/orders/TrackOrder'
 import Wishlist from './components/wishlist/Wishlist'
 import Footer from './components/shared/Footer'
+import SellerDashboard from './components/seller/dashboard/SellerDashboard'
 
 
 // Wrapper to conditionally show footer
@@ -35,6 +36,7 @@ function Layout({ children }) {
     "/order-confirm",
     "/mock-gateway",
     "/admin",
+    "/seller",
   ];
 
   const shouldHideFooter = hideFooterRoutes.some((path) =>
@@ -87,6 +89,14 @@ function App() {
               <Route path='sellers' element={<Sellers />} />
               <Route path='orders' element={<Orders />} />
               <Route path='categories' element={<Category />} />
+            </Route>
+          </Route>
+
+          <Route path='/' element={<PrivateRoute sellerOnly />}>
+            <Route path='/seller' element={<AdminLayout />}>
+              <Route path='' element={<SellerDashboard />} />
+              <Route path='products' element={<AdminProducts />} />
+              <Route path='orders' element={<Orders />} />
             </Route>
           </Route>
         </Routes>

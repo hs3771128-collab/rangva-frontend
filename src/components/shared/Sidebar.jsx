@@ -30,7 +30,8 @@ const Sidebar = ({isProfileLayout = false}) => {
                                 <Link
                                     to={item.href}
                                     className={classNames(
-                                        pathName === item.href
+                                        pathName === item.href ||
+                                            pathName.startsWith(`${item.href}/`)
                                             ? "bg-custom-blue text-white"
                                             : "text-gray-400 hover:bg-gray-800 hover:text-white",
                                         "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
